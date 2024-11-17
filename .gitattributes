@@ -1,0 +1,8 @@
+# Normaliza archivos de texto a LF
+* text=auto
+
+# Archivos binarios no deben cambiarse
+*.png binary
+*.jpg binary
+*.pdf binary
+
