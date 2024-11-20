@@ -9,16 +9,20 @@ import java.util.concurrent.TimeUnit;
 
 @BenchmarkMode({Mode.AverageTime})
 @OutputTimeUnit(TimeUnit.MILLISECONDS)
-@Warmup(iterations = 2, time = 500, timeUnit = TimeUnit.MILLISECONDS)
-@Measurement(iterations = 5, time = 500, timeUnit = TimeUnit.MILLISECONDS)
+@Warmup(iterations = 1, time = 500, timeUnit = TimeUnit.MILLISECONDS)
+@Measurement(iterations = 2, time = 500, timeUnit = TimeUnit.MILLISECONDS)
 @Fork(1)
 public class MatrixMultiplicationBenchmarking {
 
 	@State(Scope.Thread)
 	public static class Operands {
 
-		@Param({"10", "100", "500", "1000", "3000"})
+		@Param({"10", "100", "500", "1000", "2000", "3000"})
 		private int n;
+		/*
+		@Param({"1", "2", "4", "8", "16"})
+		private int num_threads;
+		 */
 
 		private double[][] a;
 		private double[][] b;
@@ -41,9 +45,6 @@ public class MatrixMultiplicationBenchmarking {
 			Runtime runtime = Runtime.getRuntime();
 			runtime.gc();
 			initialMemory = runtime.totalMemory() - runtime.freeMemory();
-
-			ThreadMXBean threadMXBean = ManagementFactory.getThreadMXBean();
-			initialCpuTime = threadMXBean.getCurrentThreadCpuTime();
 		}
 
 
@@ -57,13 +58,39 @@ public class MatrixMultiplicationBenchmarking {
 
 			long memoryUsed = finalMemory - initialMemory;
 			long cpuTimeUsed = finalCpuTime - initialCpuTime;
+			com.sun.management.OperatingSystemMXBean osBean =
+					(com.sun.management.OperatingSystemMXBean) ManagementFactory.getOperatingSystemMXBean();
+
+			int availableProcessors = osBean.getAvailableProcessors();
+			double processCpuLoad = osBean.getProcessCpuLoad();
+			double systemCpuLoad = osBean.getSystemCpuLoad();
 
 			System.out.println("Matrix size: " + n + "x" + n);
 			System.out.println("Total Memory used: " + memoryUsed / (1024 * 1024) + " MB");
-			System.out.println("Total CPU time used: " + cpuTimeUsed + " nanoseconds");
+			System.out.println("Process CPU Load: " + processCpuLoad * 100 + " %");
+			System.out.println("System CPU Load: " + systemCpuLoad * 100 + " %");
+			int coresUsed = (int) (processCpuLoad * availableProcessors);
+			System.out.println("Available Processors: " + availableProcessors);
+			System.out.println("Cores utilized: ~" + coresUsed);
+
 		}
 	}
+/*
+	@Benchmark
+	public void multiplicationBasic(Operands operands) {
+		BasicMatrixMultiplication basicMatrixMultiplication = new BasicMatrixMultiplication();
+		basicMatrixMultiplication.execute(operands.a, operands.b);
+	}
 
+ */
+/*
+	@Benchmark
+	public void multiplicationParallelStreams(Operands operands) {
+		MatrixMultiplicationParallelStreams matrixMultiplicationParallelStreams = new MatrixMultiplicationParallelStreams();
+		matrixMultiplicationParallelStreams.execute(operands.a, operands.b, operands.num_threads);
+	}
+
+ */
 	@Benchmark
 	public void multiplicationBasic(Operands operands) {
 		BasicMatrixMultiplication basicMatrixMultiplication = new BasicMatrixMultiplication();
@@ -71,8 +98,24 @@ public class MatrixMultiplicationBenchmarking {
 	}
 
 	@Benchmark
+	public void multiplicationVectorized(Operands operands) {
+		VectorizedMatrixMultiplication vectorizedMatrixMultiplication = new VectorizedMatrixMultiplication();
+		vectorizedMatrixMultiplication.execute(operands.a, operands.b);
+	}
+
+	/*
+	@Benchmark
+	public void multiplicationFixedThreads(Operands operands) {
+		double[][] result = new double[operands.a.length][operands.a.length];
+		MatrixMultiplicationFixedThreads matrixMultiplicationFixedThreads = new MatrixMultiplicationFixedThreads(operands.a, operands.b, result);
+		matrixMultiplicationFixedThreads.execute(16);
+	}
+
+	@Benchmark
 	public void multiplicationAtomic(Operands operands) {
-		MatrixMultiplicationAtomic matrixMultiplicationAtomic = new MatrixMultiplicationAtomic();
+		Atomic matrixMultiplicationAtomic = new Atomic();
 		matrixMultiplicationAtomic.execute(operands.a, operands.b);
 	}
+
+	 */
 }

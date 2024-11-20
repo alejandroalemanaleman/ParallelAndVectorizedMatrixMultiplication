@@ -5,26 +5,24 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 public class MatrixMultiplicationFixedThreads {
-    private static final int SIZE = 1024;
-    private static final double[][] a = new double[SIZE][SIZE];
-    private static final double[][] b = new double[SIZE][SIZE];
-    private static final double[][] result = new double[SIZE][SIZE];
+    public MatrixMultiplicationFixedThreads(double[][] a, double[][] b, double[][] result) {
+        this.a = a;
+        this.b = b;
+        this.result = result;
+        this.n = a.length;
+    }
 
-    public static void main(String[] args) {
-        // Initialize matrices
-        initializeMatrix(a);
-        initializeMatrix(b);
+    private static double[][] a;
+    private static double[][] b;
+    private static double[][] result;
+    private static int n;
 
-        // Define the fixed number of threads
-        int numThreads = 16;
+    public double[][] execute(int numThreads) {
         ExecutorService executorService = Executors.newFixedThreadPool(numThreads);
 
-        long startTime = System.currentTimeMillis();
-
-        // Submit each row multiplication task to the ExecutorService
-        for (int i = 0; i < SIZE; i++) {
+        for (int i = 0; i < n; i++) {
             final int row = i;
-            executorService.submit(() -> multiplyRow(row));
+            executorService.submit(() -> multiplyRow(row, n));
         }
 
         // Shut down the ExecutorService once all tasks have been submitted
@@ -36,16 +34,13 @@ public class MatrixMultiplicationFixedThreads {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-
-        long endTime = System.currentTimeMillis();
-        System.out.println("Execution time with a fixed number of threads: " + (endTime - startTime) + " ms");
+    return result;
     }
 
-    private static void multiplyRow(int row) {
-        // Print the current thread name
-        System.out.println("Executing thread: " + Thread.currentThread().getName());
-        for (int j = 0; j < SIZE; j++) {
-            for (int k = 0; k < SIZE; k++) {
+    private static void multiplyRow(int row, int n) {
+
+        for (int j = 0; j < n; j++) {
+            for (int k = 0; k < n; k++) {
                 result[row][j] += a[row][k] * b[k][j];
             }
         }

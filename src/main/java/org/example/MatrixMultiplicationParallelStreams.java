@@ -5,27 +5,14 @@ import java.lang.management.OperatingSystemMXBean;
 import java.util.stream.IntStream;
 
 public class MatrixMultiplicationParallelStreams {
-    public static void main(String[] args) {
-        // Force the use of 8 threads in ForkJoinPool
-        System.setProperty("java.util.concurrent.ForkJoinPool.common.parallelism", "8");
+    public double[][] execute(double[][] a, double[][] b, int n_threads) {
+        System.setProperty("java.util.concurrent.ForkJoinPool.common.parallelism", String.valueOf(n_threads));
 
-        // Get system information
-        printSystemInfo();
-
-        int size = 1024;
-        double[][] a = new double[size][size];
-        double[][] b = new double[size][size];
+        int size = a.length;
         double[][] result = new double[size][size];
-
-        // Matrix initialization
-        initializeMatrix(a);
-        initializeMatrix(b);
-
-        long startTime = System.currentTimeMillis();
 
         // Matrix multiplication using parallel streams
         IntStream.range(0, size).parallel().forEach(i -> {
-            System.out.println("Executing thread: " + Thread.currentThread().getName());
             for (int j = 0; j < size; j++) {
                 for (int k = 0; k < size; k++) {
                     result[i][j] += a[i][k] * b[k][j];
@@ -33,8 +20,7 @@ public class MatrixMultiplicationParallelStreams {
             }
         });
 
-        long endTime = System.currentTimeMillis();
-        System.out.println("Execution time with parallel streams: " + (endTime - startTime) + " ms");
+        return result;
     }
 
     private static void initializeMatrix(double[][] matrix) {
