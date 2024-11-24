@@ -22,7 +22,9 @@ public class MatrixMultiplicationBenchmarking {
 		/*
 		@Param({"1", "2", "4", "8", "16"})
 		private int num_threads;
+
 		 */
+
 
 		private double[][] a;
 		private double[][] b;
@@ -66,12 +68,9 @@ public class MatrixMultiplicationBenchmarking {
 			double systemCpuLoad = osBean.getSystemCpuLoad();
 
 			System.out.println("Matrix size: " + n + "x" + n);
-			System.out.println("Total Memory used: " + memoryUsed / (1024 * 1024) + " MB");
+			System.out.println("Total Memory used: " + memoryUsed / (1024) + " KB");
 			System.out.println("Process CPU Load: " + processCpuLoad * 100 + " %");
 			System.out.println("System CPU Load: " + systemCpuLoad * 100 + " %");
-			int coresUsed = (int) (processCpuLoad * availableProcessors);
-			System.out.println("Available Processors: " + availableProcessors);
-			System.out.println("Cores utilized: ~" + coresUsed);
 
 		}
 	}
@@ -91,31 +90,47 @@ public class MatrixMultiplicationBenchmarking {
 	}
 
  */
+
 	@Benchmark
 	public void multiplicationBasic(Operands operands) {
 		BasicMatrixMultiplication basicMatrixMultiplication = new BasicMatrixMultiplication();
 		basicMatrixMultiplication.execute(operands.a, operands.b);
 	}
 
+
+
+/*
 	@Benchmark
 	public void multiplicationVectorized(Operands operands) {
 		VectorizedMatrixMultiplication vectorizedMatrixMultiplication = new VectorizedMatrixMultiplication();
 		vectorizedMatrixMultiplication.execute(operands.a, operands.b);
 	}
 
+ */
+
 	/*
 	@Benchmark
 	public void multiplicationFixedThreads(Operands operands) {
 		double[][] result = new double[operands.a.length][operands.a.length];
 		MatrixMultiplicationFixedThreads matrixMultiplicationFixedThreads = new MatrixMultiplicationFixedThreads(operands.a, operands.b, result);
-		matrixMultiplicationFixedThreads.execute(16);
+		matrixMultiplicationFixedThreads.execute(operands.num_threads);
 	}
 
+	 */
+/*
 	@Benchmark
 	public void multiplicationAtomic(Operands operands) {
 		Atomic matrixMultiplicationAtomic = new Atomic();
 		matrixMultiplicationAtomic.execute(operands.a, operands.b);
 	}
 
-	 */
+ */
+
+	@Benchmark
+	public void multiplicationVectorized(Operands operands) {
+		VectorizedMatrixMultiplication vectorized = new VectorizedMatrixMultiplication();
+		vectorized.execute(operands.a, operands.b);
+	}
+
+
 }

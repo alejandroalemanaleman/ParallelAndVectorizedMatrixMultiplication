@@ -1,6 +1,6 @@
 package org.example;
 
-public class BasicMatrixMultiplication {
+public class BasicMatrixMultiplication implements MatrixMultiplication{
 
 	public double[][] execute(double[][] a, double[][] b) {
 		assert a.length == b.length;
