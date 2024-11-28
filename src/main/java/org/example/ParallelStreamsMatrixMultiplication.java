@@ -4,9 +4,14 @@ import java.lang.management.ManagementFactory;
 import java.lang.management.OperatingSystemMXBean;
 import java.util.stream.IntStream;
 
-public class MatrixMultiplicationParallelStreams {
-    public double[][] execute(double[][] a, double[][] b, int n_threads) {
-        System.setProperty("java.util.concurrent.ForkJoinPool.common.parallelism", String.valueOf(n_threads));
+public class ParallelStreamsMatrixMultiplication implements MatrixMultiplication{
+    public ParallelStreamsMatrixMultiplication(int numThreads) {
+        this.numThreads = numThreads;
+    }
+    private final int numThreads;
+
+    public double[][] execute(double[][] a, double[][] b) {
+        System.setProperty("java.util.concurrent.ForkJoinPool.common.parallelism", String.valueOf(this.numThreads));
 
         int size = a.length;
         double[][] result = new double[size][size];
@@ -21,14 +26,6 @@ public class MatrixMultiplicationParallelStreams {
         });
 
         return result;
-    }
-
-    private static void initializeMatrix(double[][] matrix) {
-        for (int i = 0; i < matrix.length; i++) {
-            for (int j = 0; j < matrix[i].length; j++) {
-                matrix[i][j] = Math.random();
-            }
-        }
     }
 
     private static void printSystemInfo() {

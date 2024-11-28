@@ -11,13 +11,16 @@ import java.util.concurrent.TimeUnit;
 @Warmup(iterations = 1, time = 500, timeUnit = TimeUnit.MILLISECONDS)
 @Measurement(iterations = 2, time = 500, timeUnit = TimeUnit.MILLISECONDS)
 @Fork(1)
-public class MatrixMultiplicationBenchmarking {
+public class ParallelMatrixMultiplicationBenchmarking {
 
 	@State(Scope.Thread)
 	public static class Operands {
 
 		@Param({"10", "100", "500", "1000", "2000", "3000"})
 		private int n;
+
+		@Param({"1", "2", "4", "8", "16"})
+		private int numThreads;
 
 		private double[][] a;
 		private double[][] b;
@@ -62,20 +65,15 @@ public class MatrixMultiplicationBenchmarking {
 	}
 
 	@Benchmark
-	public void multiplicationBasic(Operands operands) {
-		BasicMatrixMultiplication basicMatrixMultiplication = new BasicMatrixMultiplication();
-		basicMatrixMultiplication.execute(operands.a, operands.b);
+	public void multiplicationParallelStreams(Operands operands) {
+		ParallelStreamsMatrixMultiplication parallelStreamsMatrixMultiplication = new ParallelStreamsMatrixMultiplication(operands.numThreads);
+		parallelStreamsMatrixMultiplication.execute(operands.a, operands.b);
 	}
 
 	@Benchmark
-	public void multiplicationAtomic(Operands operands) {
-		AtomicMatrixMultiplication atomicMatrixMultiplication = new AtomicMatrixMultiplication();
-		atomicMatrixMultiplication.execute(operands.a, operands.b);
+	public void multiplicationFixedThreads(Operands operands) {
+		FixedThreadsMatrixMultiplication fixedThreadsMatrixMultiplication = new FixedThreadsMatrixMultiplication(operands.numThreads);
+		fixedThreadsMatrixMultiplication.execute(operands.a, operands.b);
 	}
 
-	@Benchmark
-	public void multiplicationVectorized(Operands operands) {
-		VectorizedMatrixMultiplication vectorizedMatrixMultiplication = new VectorizedMatrixMultiplication();
-		vectorizedMatrixMultiplication.execute(operands.a, operands.b);
-	}
 }

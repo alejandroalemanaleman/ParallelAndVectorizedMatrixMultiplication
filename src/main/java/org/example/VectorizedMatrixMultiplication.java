@@ -13,10 +13,9 @@ public class VectorizedMatrixMultiplication {
         int colsB = matrixB[0].length;
 
         if (colsA != rowsB) {
-            throw new IllegalArgumentException("El número de columnas de A debe ser igual al número de filas de B.");
+            throw new IllegalArgumentException("Not same number of columns in A and B matrices.");
         }
 
-        // Convertir matrices bidimensionales a arreglos planos
         double[] A = new double[rowsA * colsA];
         double[] B = new double[rowsB * colsB];
         double[] C = new double[rowsA * colsB];
@@ -33,7 +32,6 @@ public class VectorizedMatrixMultiplication {
             }
         }
 
-        // Kernel de Aparapi
         Kernel kernel = new Kernel() {
             @Override
             public void run() {
@@ -49,11 +47,9 @@ public class VectorizedMatrixMultiplication {
             }
         };
 
-        // Ejecutar el kernel
         kernel.execute(Range.create(rowsA * colsB));
         kernel.dispose();
 
-        // Convertir el arreglo plano C a una matriz bidimensional
         double[][] result = new double[rowsA][colsB];
         for (int i = 0; i < rowsA; i++) {
             for (int j = 0; j < colsB; j++) {
