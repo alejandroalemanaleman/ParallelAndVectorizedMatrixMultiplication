@@ -8,8 +8,8 @@ import java.util.concurrent.TimeUnit;
 
 @BenchmarkMode({Mode.AverageTime})
 @OutputTimeUnit(TimeUnit.MILLISECONDS)
-@Warmup(iterations = 1, time = 500, timeUnit = TimeUnit.MILLISECONDS)
-@Measurement(iterations = 2, time = 500, timeUnit = TimeUnit.MILLISECONDS)
+@Warmup(iterations = 2, time = 500, timeUnit = TimeUnit.MILLISECONDS)
+@Measurement(iterations = 3, time = 500, timeUnit = TimeUnit.MILLISECONDS)
 @Fork(1)
 public class ParallelMatrixMultiplicationBenchmarking {
 
@@ -19,8 +19,10 @@ public class ParallelMatrixMultiplicationBenchmarking {
 		@Param({"10", "100", "500", "1000", "2000", "3000"})
 		private int n;
 
-		@Param({"1", "2", "4", "8", "16"})
+		@Param({"1", "2", "4", "8", "16", "32"})
 		private int numThreads;
+
+
 
 		private double[][] a;
 		private double[][] b;
@@ -63,17 +65,30 @@ public class ParallelMatrixMultiplicationBenchmarking {
 
 		}
 	}
-
+/*
 	@Benchmark
 	public void multiplicationParallelStreams(Operands operands) {
 		ParallelStreamsMatrixMultiplication parallelStreamsMatrixMultiplication = new ParallelStreamsMatrixMultiplication(operands.numThreads);
 		parallelStreamsMatrixMultiplication.execute(operands.a, operands.b);
 	}
 
+
+
 	@Benchmark
 	public void multiplicationFixedThreads(Operands operands) {
 		FixedThreadsMatrixMultiplication fixedThreadsMatrixMultiplication = new FixedThreadsMatrixMultiplication(operands.numThreads);
 		fixedThreadsMatrixMultiplication.execute(operands.a, operands.b);
 	}
+
+	@Benchmark
+	public void multiplicationSemaphore(Operands operands) throws InterruptedException {
+		SemaphoreMatrixMultiplication semaphoreMatrixMultiplication = new SemaphoreMatrixMultiplication();
+		semaphoreMatrixMultiplication.execute(operands.a, operands.b, operands.numThreads);
+} */
+	@Benchmark
+	public void multiplicationSynchronizedBlocks(Operands operands) throws InterruptedException {
+		SynchronizedBlocksMatrixMultiplication synchronizedBlocksMatrixMultiplication = new SynchronizedBlocksMatrixMultiplication(operands.numThreads);
+		synchronizedBlocksMatrixMultiplication.execute(operands.a, operands.b);
+}
 
 }

@@ -16,7 +16,6 @@ public class ParallelStreamsMatrixMultiplication implements MatrixMultiplication
         int size = a.length;
         double[][] result = new double[size][size];
 
-        // Matrix multiplication using parallel streams
         IntStream.range(0, size).parallel().forEach(i -> {
             for (int j = 0; j < size; j++) {
                 for (int k = 0; k < size; k++) {
@@ -26,18 +25,5 @@ public class ParallelStreamsMatrixMultiplication implements MatrixMultiplication
         });
 
         return result;
-    }
-
-    private static void printSystemInfo() {
-        OperatingSystemMXBean osBean = ManagementFactory.getOperatingSystemMXBean();
-        Runtime runtime = Runtime.getRuntime();
-
-        System.out.println("System Information:");
-        System.out.println("Operating System: " + osBean.getName() + " " + osBean.getVersion());
-        System.out.println("Architecture: " + osBean.getArch());
-        System.out.println("Available Processors: " + osBean.getAvailableProcessors());
-        System.out.println("Total Memory (MB): " + (runtime.totalMemory() / 1024 / 1024));
-        System.out.println("Free Memory (MB): " + (runtime.freeMemory() / 1024 / 1024));
-        System.out.println("Active Thread Count: " + Thread.activeCount());
     }
 }

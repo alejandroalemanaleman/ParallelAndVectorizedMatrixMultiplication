@@ -8,8 +8,8 @@ import java.util.concurrent.TimeUnit;
 
 @BenchmarkMode({Mode.AverageTime})
 @OutputTimeUnit(TimeUnit.MILLISECONDS)
-@Warmup(iterations = 1, time = 500, timeUnit = TimeUnit.MILLISECONDS)
-@Measurement(iterations = 2, time = 500, timeUnit = TimeUnit.MILLISECONDS)
+@Warmup(iterations = 2, time = 500, timeUnit = TimeUnit.MILLISECONDS)
+@Measurement(iterations = 3, time = 500, timeUnit = TimeUnit.MILLISECONDS)
 @Fork(1)
 public class MatrixMultiplicationBenchmarking {
 
@@ -67,15 +67,19 @@ public class MatrixMultiplicationBenchmarking {
 		basicMatrixMultiplication.execute(operands.a, operands.b);
 	}
 
+
+
 	@Benchmark
 	public void multiplicationAtomic(Operands operands) {
 		AtomicMatrixMultiplication atomicMatrixMultiplication = new AtomicMatrixMultiplication();
 		atomicMatrixMultiplication.execute(operands.a, operands.b);
 	}
-
+/*
 	@Benchmark
 	public void multiplicationVectorized(Operands operands) {
 		VectorizedMatrixMultiplication vectorizedMatrixMultiplication = new VectorizedMatrixMultiplication();
 		vectorizedMatrixMultiplication.execute(operands.a, operands.b);
 	}
+
+ */
 }
