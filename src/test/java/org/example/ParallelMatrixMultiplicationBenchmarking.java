@@ -19,7 +19,7 @@ public class ParallelMatrixMultiplicationBenchmarking {
 		@Param({"10", "100", "500", "1000", "2000", "3000"})
 		private int n;
 
-		@Param({"1", "2", "4", "8", "16", "32"})
+		@Param({"1", "2", "4", "8", "16"})
 		private int numThreads;
 
 
@@ -65,14 +65,12 @@ public class ParallelMatrixMultiplicationBenchmarking {
 
 		}
 	}
-/*
+
 	@Benchmark
 	public void multiplicationParallelStreams(Operands operands) {
 		ParallelStreamsMatrixMultiplication parallelStreamsMatrixMultiplication = new ParallelStreamsMatrixMultiplication(operands.numThreads);
 		parallelStreamsMatrixMultiplication.execute(operands.a, operands.b);
 	}
-
-
 
 	@Benchmark
 	public void multiplicationFixedThreads(Operands operands) {
@@ -82,13 +80,14 @@ public class ParallelMatrixMultiplicationBenchmarking {
 
 	@Benchmark
 	public void multiplicationSemaphore(Operands operands) throws InterruptedException {
-		SemaphoreMatrixMultiplication semaphoreMatrixMultiplication = new SemaphoreMatrixMultiplication();
-		semaphoreMatrixMultiplication.execute(operands.a, operands.b, operands.numThreads);
-} */
+		SemaphoreMatrixMultiplication semaphoreMatrixMultiplication = new SemaphoreMatrixMultiplication(operands.numThreads);
+		semaphoreMatrixMultiplication.execute(operands.a, operands.b);
+	}
+
 	@Benchmark
 	public void multiplicationSynchronizedBlocks(Operands operands) throws InterruptedException {
 		SynchronizedBlocksMatrixMultiplication synchronizedBlocksMatrixMultiplication = new SynchronizedBlocksMatrixMultiplication(operands.numThreads);
 		synchronizedBlocksMatrixMultiplication.execute(operands.a, operands.b);
-}
+	}
 
 }

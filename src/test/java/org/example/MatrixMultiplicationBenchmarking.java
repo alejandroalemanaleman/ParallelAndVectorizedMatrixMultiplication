@@ -67,19 +67,15 @@ public class MatrixMultiplicationBenchmarking {
 		basicMatrixMultiplication.execute(operands.a, operands.b);
 	}
 
-
-
 	@Benchmark
 	public void multiplicationAtomic(Operands operands) {
 		AtomicMatrixMultiplication atomicMatrixMultiplication = new AtomicMatrixMultiplication();
 		atomicMatrixMultiplication.execute(operands.a, operands.b);
 	}
-/*
+
 	@Benchmark
 	public void multiplicationVectorized(Operands operands) {
 		VectorizedMatrixMultiplication vectorizedMatrixMultiplication = new VectorizedMatrixMultiplication();
 		vectorizedMatrixMultiplication.execute(operands.a, operands.b);
 	}
-
- */
 }
